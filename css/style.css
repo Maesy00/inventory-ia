@@ -306,6 +306,10 @@ textarea.input {
   resize: vertical;
 }
 
+select.input.is-empty {
+  color: var(--text-3);
+}
+
 select.input {
   padding-right: 40px;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 256 256' fill='%239b9ba3'%3E%3Cpath d='M213.66 101.66l-80 80a8 8 0 0 1-11.32 0l-80-80a8 8 0 0 1 11.32-11.32L128 164.69l74.34-74.35a8 8 0 0 1 11.32 11.32Z'/%3E%3C/svg%3E");
@@ -471,31 +475,6 @@ select.input {
 }
 
 /* ---------- Formulaire ---------- */
-
-.category-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: var(--s-2);
-}
-
-.category-btn {
-  height: 44px;
-  padding: 0 4px;
-  border-radius: var(--r-control);
-  background: var(--surface-2);
-  border: 1px solid var(--border);
-  font-size: 13px;
-  font-weight: 500;
-  color: var(--text-2);
-  min-width: 0;
-  transition: background var(--t-fast), color var(--t-fast), border-color var(--t-fast);
-}
-
-.category-btn.selected {
-  background: var(--primary);
-  border-color: var(--primary);
-  color: var(--on-primary);
-}
 
 .rating-stars {
   display: flex;

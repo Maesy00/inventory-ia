@@ -133,22 +133,31 @@ editModalOverlay.addEventListener("click", (event) => {
 });
 
 function renderCategoryPicker() {
-  CATEGORIES.forEach((category) => {
-    const btn = document.createElement("button");
-    btn.type = "button";
-    btn.className = "category-btn";
-    btn.dataset.id = category.id;
-    btn.textContent = category.label;
-    btn.addEventListener("click", () => selectCategory(category));
-    categoryPicker.appendChild(btn);
+  categoryPicker.innerHTML =
+    `<option value="">Choisir une catégorie</option>` +
+    CATEGORIES.map((c) => `<option value="${c.id}">${c.label}</option>`).join("");
+
+  categoryPicker.addEventListener("change", () => {
+    const category = CATEGORIES.find((c) => c.id === categoryPicker.value);
+    if (category) selectCategory(category);
+    else clearCategory();
   });
+}
+
+function clearCategory() {
+  selectedCategory = null;
+  categoryPicker.value = "";
+  categoryPicker.classList.add("is-empty");
+  locationField.hidden = true;
+  authorField.hidden = true;
+  mediumField.hidden = true;
+  mediumSelect.innerHTML = "";
 }
 
 function selectCategory(category) {
   selectedCategory = category;
-  document.querySelectorAll(".category-btn").forEach((btn) => {
-    btn.classList.toggle("selected", btn.dataset.id === category.id);
-  });
+  categoryPicker.value = category.id;
+  categoryPicker.classList.remove("is-empty");
   locationField.hidden = !category.hasLocation;
   authorField.hidden = !category.hasAuthor;
 
@@ -195,14 +204,7 @@ function resetFormFields() {
   entryForm.reset();
   setSelectedDate(new Date());
   setRating(null);
-  locationField.hidden = true;
-  authorField.hidden = true;
-  mediumField.hidden = true;
-  mediumSelect.innerHTML = "";
-  document
-    .querySelectorAll(".category-btn")
-    .forEach((btn) => btn.classList.remove("selected"));
-  selectedCategory = null;
+  clearCategory();
 }
 
 function exitEditMode() {
