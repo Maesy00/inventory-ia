@@ -82,6 +82,8 @@ function confirmDialog(message, confirmLabel = "Supprimer") {
 const categoryPicker = document.getElementById("category-picker");
 const entryForm = document.getElementById("entry-form");
 const titleInput = document.getElementById("entry-title");
+const authorField = document.getElementById("author-field");
+const authorInput = document.getElementById("entry-author");
 const mediumField = document.getElementById("medium-field");
 const mediumLabel = document.getElementById("medium-label");
 const mediumSelect = document.getElementById("entry-medium");
@@ -148,6 +150,7 @@ function selectCategory(category) {
     btn.classList.toggle("selected", btn.dataset.id === category.id);
   });
   locationField.hidden = !category.hasLocation;
+  authorField.hidden = !category.hasAuthor;
 
   if (category.mediums) {
     mediumLabel.textContent = `${category.mediumLabel || "Diffusion"} (optionnel)`;
@@ -193,6 +196,7 @@ function resetFormFields() {
   setSelectedDate(new Date());
   setRating(null);
   locationField.hidden = true;
+  authorField.hidden = true;
   mediumField.hidden = true;
   mediumSelect.innerHTML = "";
   document
@@ -211,6 +215,7 @@ function editEntry(entry) {
   const category = CATEGORIES.find((c) => c.id === entry.category);
   selectCategory(category);
   titleInput.value = entry.title;
+  authorInput.value = entry.author || "";
   mediumSelect.value = entry.medium || "";
   locationInput.value = entry.location || "";
   setSelectedDate(parseISODate(entry.date));
@@ -243,6 +248,10 @@ entryForm.addEventListener("submit", async (event) => {
     title,
     date: dateInput.value,
     rating: selectedRating,
+    author:
+      selectedCategory.hasAuthor && authorInput.value
+        ? authorInput.value.trim()
+        : null,
     medium:
       selectedCategory.mediums && mediumSelect.value ? mediumSelect.value : null,
     location:
@@ -303,7 +312,9 @@ function openDetailModal(entry) {
   const category = CATEGORIES.find((c) => c.id === entry.category);
   const stars = formatStars(entry.rating);
 
-  const metaParts = [formatDisplayDate(entry.date)];
+  const metaParts = [];
+  if (entry.author) metaParts.push(escapeHTML(entry.author));
+  metaParts.push(formatDisplayDate(entry.date));
   if (entry.medium) metaParts.push(escapeHTML(entry.medium));
   if (entry.location) metaParts.push(escapeHTML(entry.location));
 
@@ -404,7 +415,7 @@ function renderHistory() {
 
   if (historySearchQuery) {
     entries = entries.filter((e) => {
-      const haystack = [e.title, e.location, e.medium, e.notes]
+      const haystack = [e.title, e.author, e.location, e.medium, e.notes]
         .filter(Boolean)
         .join(" ")
         .toLowerCase();
@@ -439,6 +450,7 @@ function renderHistory() {
         <div class="entry-meta">
           <span class="entry-tag">${category.label}</span>
           ${stars ? `<span class="entry-stars">${stars}</span>` : ""}
+          ${entry.author ? `<span class="entry-detail">${escapeHTML(entry.author)}</span>` : ""}
           <span class="entry-detail">${formatDisplayDate(entry.date)}</span>
           ${entry.medium ? `<span class="entry-detail">${escapeHTML(entry.medium)}</span>` : ""}
           ${entry.location ? `<span class="entry-detail">${escapeHTML(entry.location)}</span>` : ""}

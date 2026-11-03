@@ -10,6 +10,7 @@ create table if not exists inventory_entries (
   title text not null,
   date date not null,
   rating smallint check (rating between 1 and 5),
+  author text,
   medium text,
   location text,
   notes text default '',
@@ -36,3 +37,6 @@ create policy "Users can update own inventory entries"
 create policy "Users can delete own inventory entries"
   on inventory_entries for delete
   using (auth.uid() = user_id);
+
+-- Ajout ultérieur (livres) : à exécuter si la table existait déjà.
+alter table inventory_entries add column if not exists author text;

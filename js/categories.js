@@ -21,6 +21,7 @@ const CATEGORIES = [
   {
     id: "livre",
     label: "Livre",
+    hasAuthor: true,
     mediumLabel: "Type",
     mediums: ["Roman", "BD", "Manga", "Essai", "Biographie", "Poésie", "Nouvelles"],
   },
