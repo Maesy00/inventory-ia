@@ -1,0 +1,241 @@
+<!doctype html>
+<html lang="fr" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>Inventory.ia</title>
+  <meta name="description" content="Ton inventaire culturel : films, séries, documentaires, livres, spectacles et expositions.">
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" href="images/favicon-32.png">
+  <link rel="apple-touch-icon" href="images/apple-touch-icon.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Inventory.ia">
+  <meta name="theme-color" content="#ffffff">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500&display=swap">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/fill/style.css">
+  <link rel="stylesheet" href="css/tokens.css">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div id="auth-gate">
+    <div class="auth-card">
+      <img class="auth-logo" src="images/icon-192.png" alt="" width="64" height="64">
+      <h1 class="large-title" id="auth-title">Connexion</h1>
+      <p class="auth-subtitle">Inventory.ia — le même compte que Coach.ia, Brain.ia et Pause.</p>
+
+      <form id="auth-form">
+        <label class="field">
+          <span class="visually-hidden">Email</span>
+          <input class="input" type="email" id="auth-email" placeholder="Email" required autocomplete="email">
+        </label>
+        <label class="field">
+          <span class="visually-hidden">Mot de passe</span>
+          <input class="input" type="password" id="auth-password" placeholder="Mot de passe" required autocomplete="current-password" minlength="6">
+        </label>
+        <p id="auth-error" class="auth-message error" hidden></p>
+        <p id="auth-info" class="auth-message info" hidden></p>
+        <button type="submit" class="btn btn-primary btn-block" id="auth-submit-btn">Se connecter</button>
+      </form>
+
+      <p class="auth-switch">
+        <span id="auth-switch-text">Pas encore de compte ?</span>
+        <button type="button" id="auth-toggle-mode">Créer un compte</button>
+      </p>
+    </div>
+  </div>
+
+  <div id="app-shell" hidden>
+    <main class="screens">
+      <header class="topbar">
+        <div class="brand">
+          <img class="brand-mark" src="images/icon-192.png" alt="" width="28" height="28">
+          <span class="brand-name">Inventory.ia</span>
+        </div>
+        <button type="button" id="sign-out-btn" class="icon-btn" aria-label="Se déconnecter">
+          <i class="ph ph-sign-out" aria-hidden="true"></i>
+        </button>
+      </header>
+
+      <section id="dashboard" class="screen tab-panel active" aria-label="Bilan">
+        <h1 class="large-title screen-title">Bilan</h1>
+
+        <div class="segmented period-tabs" id="dashboard-period-tabs">
+          <button type="button" class="period-btn" data-period="all">Global</button>
+          <button type="button" class="period-btn active" data-period="year">Année</button>
+        </div>
+
+        <div class="period-nav" id="dashboard-period-nav">
+          <button type="button" class="icon-btn" data-dashboard-nav="prev" aria-label="Période précédente">
+            <i class="ph ph-caret-left" aria-hidden="true"></i>
+          </button>
+          <span class="period-nav-label" id="dashboard-period-label">Cette année</span>
+          <button type="button" class="icon-btn" data-dashboard-nav="next" aria-label="Période suivante">
+            <i class="ph ph-caret-right" aria-hidden="true"></i>
+          </button>
+        </div>
+
+        <div class="card summary-card" id="summary-card"></div>
+
+        <div id="category-stats"></div>
+      </section>
+
+      <section id="new-entry" class="screen tab-panel" aria-label="Ajouter">
+        <div id="entry-form-wrapper">
+          <h1 class="large-title screen-title" id="entry-form-title-text">Nouvelle entrée</h1>
+          <form id="entry-form" class="card">
+            <div class="field">
+              <span class="field-label">Catégorie</span>
+              <div id="category-picker" class="category-grid"></div>
+            </div>
+
+            <div class="field">
+              <label class="field-label" for="entry-title">Titre</label>
+              <input class="input" type="text" id="entry-title" required placeholder="Ex : Dune, Deuxième Partie">
+            </div>
+
+            <div class="field" id="medium-field" hidden>
+              <label class="field-label" for="entry-medium" id="medium-label">Diffusion (optionnel)</label>
+              <select class="input" id="entry-medium"></select>
+            </div>
+
+            <div class="field" id="location-field" hidden>
+              <label class="field-label" for="entry-location">Lieu (optionnel)</label>
+              <input class="input" type="text" id="entry-location" placeholder="Ex : Théâtre du Châtelet">
+            </div>
+
+            <div class="field date-field">
+              <span class="field-label">Date</span>
+              <button type="button" id="date-trigger" class="input date-trigger">
+                <span id="date-trigger-label">Aujourd'hui</span>
+                <i class="ph ph-calendar-blank" aria-hidden="true"></i>
+              </button>
+              <input type="hidden" id="entry-date" required>
+
+              <div id="date-popover" class="date-popover" hidden>
+                <div class="date-popover-header">
+                  <button type="button" id="date-prev" class="icon-btn" aria-label="Mois précédent">
+                    <i class="ph ph-caret-left" aria-hidden="true"></i>
+                  </button>
+                  <span id="date-popover-title"></span>
+                  <button type="button" id="date-next" class="icon-btn" aria-label="Mois suivant">
+                    <i class="ph ph-caret-right" aria-hidden="true"></i>
+                  </button>
+                </div>
+                <div class="date-popover-weekdays">
+                  <span>L</span><span>M</span><span>M</span><span>J</span><span>V</span><span>S</span><span>D</span>
+                </div>
+                <div id="date-popover-grid" class="date-popover-grid"></div>
+                <button type="button" id="date-today" class="btn btn-secondary btn-sm btn-block">Aujourd'hui</button>
+              </div>
+            </div>
+
+            <div class="field">
+              <span class="field-label">Note (optionnel)</span>
+              <div id="rating-stars" class="rating-stars"></div>
+              <input type="hidden" id="entry-rating">
+            </div>
+
+            <div class="field">
+              <label class="field-label" for="entry-notes">Note libre (optionnel)</label>
+              <textarea class="input" id="entry-notes" rows="3" placeholder="Ce que tu en as pensé..."></textarea>
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-block" id="entry-submit-btn">Consigner</button>
+          </form>
+        </div>
+      </section>
+
+      <section id="history" class="screen tab-panel" aria-label="Inventaire">
+        <h1 class="large-title screen-title">Inventaire</h1>
+
+        <div class="search-field">
+          <i class="ph ph-magnifying-glass" aria-hidden="true"></i>
+          <input class="input" type="search" id="history-search" placeholder="Rechercher un titre, un lieu..." autocomplete="off">
+        </div>
+
+        <div class="segmented period-tabs" id="history-period-tabs">
+          <button type="button" class="period-btn active" data-period="all">Tout</button>
+          <button type="button" class="period-btn" data-period="week">Semaine</button>
+          <button type="button" class="period-btn" data-period="month">Mois</button>
+          <button type="button" class="period-btn" data-period="year">Année</button>
+        </div>
+
+        <div class="period-nav" id="history-period-nav" hidden>
+          <button type="button" class="icon-btn" data-history-nav="prev" aria-label="Période précédente">
+            <i class="ph ph-caret-left" aria-hidden="true"></i>
+          </button>
+          <span class="period-nav-label" id="history-period-label">Cette semaine</span>
+          <button type="button" class="icon-btn" data-history-nav="next" aria-label="Période suivante">
+            <i class="ph ph-caret-right" aria-hidden="true"></i>
+          </button>
+        </div>
+
+        <div class="category-chip-row" id="history-category-filter">
+          <button type="button" class="category-chip active" data-category="all">Toutes</button>
+        </div>
+
+        <div id="history-list"></div>
+      </section>
+    </main>
+
+    <div id="edit-modal-overlay" class="modal-overlay" hidden>
+      <div class="modal-sheet">
+        <div class="modal-handle"></div>
+        <button type="button" id="modal-close-btn" class="icon-btn modal-close-btn" aria-label="Fermer">
+          <i class="ph ph-x" aria-hidden="true"></i>
+        </button>
+        <div id="modal-form-slot"></div>
+      </div>
+    </div>
+
+    <div id="detail-modal-overlay" class="modal-overlay" hidden>
+      <div class="modal-sheet">
+        <div class="modal-handle"></div>
+        <button type="button" id="detail-close-btn" class="icon-btn modal-close-btn" aria-label="Fermer">
+          <i class="ph ph-x" aria-hidden="true"></i>
+        </button>
+        <div id="detail-content"></div>
+      </div>
+    </div>
+
+    <div id="confirm-overlay" class="modal-overlay" hidden>
+      <div class="modal-sheet">
+        <div class="modal-handle"></div>
+        <p class="confirm-message" id="confirm-message"></p>
+        <div class="btn-row confirm-actions">
+          <button type="button" class="btn btn-secondary" id="confirm-no">Annuler</button>
+          <button type="button" class="btn btn-danger" id="confirm-yes">Supprimer</button>
+        </div>
+      </div>
+    </div>
+
+    <nav class="tabbar" role="tablist" aria-label="Navigation">
+      <button type="button" class="tab tab-btn active" role="tab" data-tab="dashboard" aria-selected="true">
+        <i class="ph ph-chart-pie-slice" aria-hidden="true"></i><i class="ph-fill ph-chart-pie-slice" aria-hidden="true"></i>Bilan
+      </button>
+      <button type="button" class="tab tab-btn" role="tab" data-tab="new-entry" aria-selected="false">
+        <i class="ph ph-plus-circle" aria-hidden="true"></i><i class="ph-fill ph-plus-circle" aria-hidden="true"></i>Ajouter
+      </button>
+      <button type="button" class="tab tab-btn" role="tab" data-tab="history" aria-selected="false">
+        <i class="ph ph-books" aria-hidden="true"></i><i class="ph-fill ph-books" aria-hidden="true"></i>Inventaire
+      </button>
+    </nav>
+  </div>
+
+  <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+  <script src="js/supabase-config.js"></script>
+  <script src="js/storage.js"></script>
+  <script src="js/categories.js"></script>
+  <script src="js/datepicker.js"></script>
+  <script src="js/app.js"></script>
+  <script src="js/auth.js"></script>
+</body>
+</html>

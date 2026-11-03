@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "inventory-ia-dev",
+      "runtimeExecutable": "python3",
+      "runtimeArgs": ["devserver.py"],
+      "port": 5501
+    }
+  ]
+}
