@@ -1,5 +1,5 @@
 /*
- * categories.js — les 6 catégories culturelles de l'inventaire.
+ * categories.js — les catégories culturelles de l'inventaire.
  * Direction "Programme" : pas d'icônes ni de couleurs par catégorie,
  * seul le libellé (composé en majuscules) distingue chaque entrée.
  */
@@ -25,5 +25,6 @@ const CATEGORIES = [
     mediums: ["Roman", "BD", "Manga", "Essai", "Biographie", "Poésie", "Nouvelles"],
   },
   { id: "spectacle", label: "Spectacle", hasLocation: true },
+  { id: "theatre", label: "Théâtre", hasLocation: true },
   { id: "exposition", label: "Exposition", hasLocation: true },
 ];
